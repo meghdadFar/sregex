@@ -1,6 +1,6 @@
 # Sregex
 
-Simplified regular expressions (Sregex) based on the Thompson's Construction algorithm.
+Simplified regular expressions (Sregex) based on the Thompson's Construction algorithm. 
 
 Supports the following operators: <br />
 lowercase English letters (a, b, c, ...) <br />
