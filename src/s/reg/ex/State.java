@@ -33,7 +33,7 @@ class State {
 
     /**
      * Validates whether the this state is an accept state.
-     * 
+     *
      * @return the isAccept
      */
     public boolean isAccept() {
@@ -56,6 +56,7 @@ class State {
 
     /**
      * Returns the list of this state's outgoing links (edges).
+     *
      * @return the outLinks
      */
     public List<Edge> getOutLinks() {
@@ -64,6 +65,7 @@ class State {
 
     /**
      * Add a link (edge) to the list of outgoing links (edges).
+     *
      * @param e the outgoing edge to be added.
      */
     public void addOutLink(Edge e) {
@@ -72,7 +74,7 @@ class State {
 
     /**
      * Returns the list of this state's incoming links (edges).
-     * 
+     *
      * @return the inLinks
      */
     public List<Edge> getInLinks() {
@@ -81,6 +83,7 @@ class State {
 
     /**
      * Add a link (edge) to the list of incoming links.
+     *
      * @param e the incoming edge to be added.
      */
     public void addInLink(Edge e) {
@@ -90,8 +93,8 @@ class State {
     /**
      * Checks whether this state contains an outgoing link (edge) labeled x.
      *
-     * @param x edge to be checked. 
-     * @return 
+     * @param x edge to be checked.
+     * @return
      */
     public boolean containsOutLink(char x) {
         for (Edge e : outLinks) {

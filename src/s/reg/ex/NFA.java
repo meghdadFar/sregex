@@ -17,90 +17,85 @@
 package s.reg.ex;
 
 /**
-* 
-* Implements a nondeterministic finite automaton (NFA).
-* @author Meghdad Farahmand<meghdad.farahmand@gmail.com>
-* 
+ *
+ * Implements a nondeterministic finite automaton (NFA).
+ *
+ * @author Meghdad Farahmand<meghdad.farahmand@gmail.com>
+ * 
 */
 class NFA {
 
     private State initialState;
     private State currentState;
-    
-  /**
-  * Constructor.
-  * 
-  * Creates an empty NFA by instantiating a start state.
-  */
-    public NFA(){
-        
+
+    /**
+     * Constructor.
+     *
+     * Creates an empty NFA by instantiating a start state.
+     */
+    public NFA() {
+
         initialState = new State();
-        currentState = initialState;   
+        currentState = initialState;
     }
-    
-    
-    
+
     /**
      * Returns initialState.
      */
     public State getInitialState() {
         return initialState;
     }
-    
-    
-     /**
+
+    /**
      * Returns currentState.
      */
     public State getCurrentState() {
         return currentState;
     }
-    
-    /**
-     * Removes the initial state.
-     * Used when connecting a capturing group to the rest of the automaton.
-     */
-    public void removeInitial(){
-        initialState = null;
-    }
-    
 
     /**
-     * Add the non-operator character x to NFA. 
-     * @param x must be an alphabetic char. It is a lowercase char with respect 
-     * to the problem definition. However it can also be an uppercase char 
-     * as well except "E".
+     * Removes the initial state. Used when connecting a capturing group to the
+     * rest of the automaton.
+     */
+    public void removeInitial() {
+        initialState = null;
+    }
+
+    /**
+     * Add the non-operator character x to NFA.
+     *
+     * @param x must be an alphabetic char. It is a lowercase char with respect
+     * to the problem definition. However it can also be an uppercase char as
+     * well except "E".
      */
     public void concat(char x) {
-        
+
         State nextState = new State();
-        Edge e = new Edge(currentState,nextState,x);
-        
+        Edge e = new Edge(currentState, nextState, x);
+
         currentState.addOutLink(e);
         nextState.addInLink(e);
 
         nextState.makeAccept();
         currentState.notAccept();
-        
+
         currentState = nextState;
-        
+
     }
-    
-    
 
     /**
      * Create an alternation branch.
-     * 
-     * This method is used when the input is |, in order to create an 
+     *
+     * This method is used when the input is |, in order to create an
      * alternation branch on the NFA.
-     * 
+     *
      * @param bcb State at the beginning of the current brach
-     * @return the beginning of the new branch. 
-     * 
+     * @return the beginning of the new branch.
+     *
      */
-    
     public State alternation(State bcb) {
         State s = new State();
-        Edge epsilon = new Edge(bcb,s,'E');
+        Edge epsilon = new Edge(bcb, s, 'E');
         bcb.addOutLink(epsilon);
         s.addInLink(epsilon);
         currentState = s;
@@ -109,36 +104,32 @@ class NFA {
 
     /**
      * Creates a (sub) NFA for kleene star.
-     * 
-     * Unlike concatenation and |, this method leaves the currentState as is. 
-     * It only adds new links to the current state
-     * 
+     *
+     * Unlike concatenation and |, this method leaves the currentState as is. It
+     * only adds new links to the current state
+     *
      * @param x the character to be transformed by *.
      */
     public void kleeneStar(char x) {
-        
-        
-        //Simplified version of kleene star:
 
+        //Simplified version of kleene star:
         //move backward one state (through x)
         currentState = currentState.sourceOf(x);
         currentState.makeAccept();
-        
+
         //go forward (through x). The new currentState has already set as
         //an accept state through concat().
         currentState = currentState.transition(x);
-        
-        
-        Edge e = new Edge(currentState,currentState,x);
+
+        Edge e = new Edge(currentState, currentState, x);
         currentState.addInLink(e);
         currentState.addOutLink(e);
-        
-        
+
         /*
-        Thompson's construction model of kleene star.
-        The three intermediating states and five edges that are required for 
-        a kleene star expression
-        */
+         Thompson's construction model of kleene star.
+         The three intermediating states and five edges that are required for 
+         a kleene star expression
+         */
 //        State one = new State();
 //        State two = new State();
 //        State three = new State();
@@ -167,15 +158,14 @@ class NFA {
 //        three.addInLink(epsilon3);
 //        three.addInLink(epsilon1);
     }
-    
-    
+
     /**
      * Overloaded kleeneStar for groups.
-     * 
+     *
      * @param x
      */
     public void kleeneStar(String s) {
         //TODO implement kleene star for capturing groups. 
     }
-    
+
 }

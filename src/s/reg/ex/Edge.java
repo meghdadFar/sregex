@@ -18,28 +18,27 @@ package s.reg.ex;
 
 /**
  * Implements edge (link) of automaton.
- * 
+ *
  * @author Meghdad Farahmand<meghdad.farahmand@gmail.com>
  */
 class Edge {
-    
+
     private char label;
     private State source;
     private State target;
-    
+
     /**
      * Constructor.
-     * 
+     *
      * @param source
      * @param target
-     * 
+     *
      */
-    Edge(State source, State target, char label){
+    Edge(State source, State target, char label) {
         this.source = source;
         this.target = target;
         this.label = label;
     }
-    
 
     /**
      * Return the source of this edge.
@@ -48,19 +47,18 @@ class Edge {
         return source;
     }
 
-
     /**
      * Return the target of this edge.
      */
     public State getTarget() {
         return target;
     }
-    
+
     /**
      * Return the label.
      */
     public char getLabel() {
         return label;
     }
-    
+
 }

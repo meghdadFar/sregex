@@ -17,22 +17,22 @@
 package s.reg.ex;
 
 /**
- * Simple un-encapsulated class to incorporate my test cases. 
+ * Simple un-encapsulated class to incorporate my test cases.
+ *
  * @author Meghdad Farahmand<meghdad.farahmand@gmail.com>
  */
 public class Test {
-    
+
     String regex = "";
     String inputTrue = "";
     String inputFalse = "";
-    
-    public Test(String regex, String inputTrue, String inputFalse){
-        
+
+    public Test(String regex, String inputTrue, String inputFalse) {
+
         this.regex = regex;
         this.inputTrue = inputTrue;
         this.inputFalse = inputFalse;
-        
+
     }
-    
-    
+
 }

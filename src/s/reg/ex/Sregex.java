@@ -14,7 +14,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package s.reg.ex;
 
 import java.util.ArrayList;
@@ -25,67 +24,59 @@ import java.util.Stack;
 
 /**
  * Simplified regular expressions (Sregex).
- * 
- * Supports the following operators:
- * lowercase English letters (a, b, c, ...)
- * |: for alternative expressions
- * *: for matching matches zero of more matches of the preceding expression
- * (): for grouping expressions
- * 
+ *
+ * Supports the following operators: lowercase English letters (a, b, c, ...) |:
+ * for alternative expressions *: for matching matches zero of more matches of
+ * the preceding expression (): for grouping expressions
+ *
  * @author Meghdad Farahmand<meghdad.farahmand@gmail.com>
  * @since 5.10.2016
  */
-
-
 public final class Sregex {
-    
-/**
- * Searches NFA for a particular character. 
- * This method was created for dealing with epsilon edges.
- * It searches the outLinks of the input state, or recursively searches the 
- * outLinks of the states that are reachable through epsilon edges from 
- * the input state. 
- * 
- * @param s current state
- * @param x character to search for
- * @return  either null if it does not find a match or the state that has an outLink that
- * matches the input character.
- * 
- * @author Meghdad Farahmand<meghdad.farahmand@gmail.com>
- */
 
-    public static State searchNFA(State s,char x){
-                
+    /**
+     * Searches NFA for a particular character. This method was created for
+     * dealing with epsilon edges. It searches the outLinks of the input state,
+     * or recursively searches the outLinks of the states that are reachable
+     * through epsilon edges from the input state.
+     *
+     * @param s current state
+     * @param x character to search for
+     * @return either null if it does not find a match or the state that has an
+     * outLink that matches the input character.
+     *
+     * @author Meghdad Farahmand<meghdad.farahmand@gmail.com>
+     */
+    public static State searchNFA(State s, char x) {
+
         //return if outLinks contain x
-        if(s.containsOutLink(x)){
+        if (s.containsOutLink(x)) {
             return s;
         }
         //else if outLinks doesnt contain x:
-        for(Edge e : s.getOutLinks()){
-            if(e.getLabel() == 'E'){
-                return searchNFA(e.getTarget(),x);
+        for (Edge e : s.getOutLinks()) {
+            if (e.getLabel() == 'E') {
+                return searchNFA(e.getTarget(), x);
             }
         }
         return null;
     }
 
-    
-     /**
+    /**
      * Reads a regular expression as input and transforms it into an NFA.
-     * 
+     *
      * @author Meghdad Farahmand<meghdad.farahmand@gmail.com>
-     * 
+     *
      * @param sRegex regular expression
      * @return nondeterministic finite automaton (NFA)
      */
-    
     public static NFA parse(String sRegex) {
 
         NFA nfa = new NFA();
         /*
-        bcb: begining of the current branch is used for handling possible future 
-        alternation branches. 
-        */
+         bcb: begining of the current branch is used for handling possible future 
+         alternation branches. 
+         */
         State bcb = nfa.getInitialState();
         char buffer = 0; //keeps the previous character for kleene star
 
@@ -118,12 +109,12 @@ public final class Sregex {
                     j++;
                 }
                 //System.out.println("Group captured: " + inBracketSubExp);
-                
+
                 //recursive call on the captured group
                 NFA subNFA = parse(inBracketSubExp.toString());
-                
+
                 //connect currentState to the begining of inBracketSubExp 
-                for(Edge e : subNFA.getInitialState().getOutLinks()){
+                for (Edge e : subNFA.getInitialState().getOutLinks()) {
                     nfa.getCurrentState().addOutLink(e);
                 }
                 subNFA.removeInitial();
@@ -137,18 +128,18 @@ public final class Sregex {
              *, or |
              */
             if (Character.isAlphabetic(sRegex.charAt(i)) && Character.isLowerCase(sRegex.charAt(i))) {
-                
+
                 buffer = sRegex.charAt(i);
                 nfa.concat(sRegex.charAt(i));
-                
+
             } else if (sRegex.charAt(i) == '*') {
-                
+
                 //make previous character/group wild card
-                nfa.kleeneStar(buffer);                
+                nfa.kleeneStar(buffer);
             } else if (sRegex.charAt(i) == '|') {//begining of an alternative branch
 
                 bcb = nfa.alternation(bcb);
-                
+
             }
             i++;
         }
@@ -157,15 +148,14 @@ public final class Sregex {
     }
 
     /**
-     * Validates whether the input string matches the input regular expression, 
+     * Validates whether the input string matches the input regular expression,
      * i.e., whether it is in the language of the input regex.
-     * 
+     *
      * @param s input string
-     * @param regex 
-     * @return 
+     * @param regex
+     * @return
      */
-    
-    public static boolean matches(String s,String regex) {
+    public static boolean matches(String s, String regex) {
 
         boolean mtch = false;
         NFA testNfa = parse(regex);
@@ -174,66 +164,59 @@ public final class Sregex {
         if (currentState.isAccept()) {
             return true;
         }
-        
+
         char[] elements = s.toCharArray();
-        
+
         State tmpState = new State();
         characters:
         for (char e : elements) {
-            
-            tmpState = searchNFA(currentState,e);
-            if(tmpState == null){
-                    return false;
+
+            tmpState = searchNFA(currentState, e);
+            if (tmpState == null) {
+                return false;
             }
             currentState = tmpState.transition(e);
-            
-            if (currentState.isAccept()){
+
+            if (currentState.isAccept()) {
                 mtch = true;
                 continue characters;
             }
             mtch = false;
         }
-        return mtch;        
+        return mtch;
     }
 
-    
     public static void main(String[] args) {
 
         List<Test> testCases = new ArrayList<>();
-        
+
         //Fields of each testCase of type Test : 
         //the regex, a matching correct and a non-matching string respectively
-        
         //concatenation
-        testCases.add(new Test("abc","abc","abcm"));
-        
-        //alternation
-        testCases.add(new Test("abc|ihg|mno|uts","mno","mnou"));
-        
-        //kleene star
-        testCases.add(new Test("abc*","abcccc","abd"));
-        testCases.add(new Test("abc*","ab","a"));
-        
-        //kleene star and alternation
-        testCases.add(new Test("abc|ihg|mno|uts*","utsssss","ih"));
-        
-        testCases.add(new Test("abcd*|lmn*","abcdddd","lmno"));
-        
-        //capturing group
-        testCases.add(new Test("abc(d|e)","abce","jkl"));
-        testCases.add(new Test("(((a)))","a","b"));
-        testCases.add(new Test("abc(d|e*)","abceeee","ab"));
+        testCases.add(new Test("abc", "abc", "abcm"));
 
-        
-        for(Test t : testCases){
-            System.out.println("\""+t.inputTrue+"\"\t matches:\t\""+ t.regex+"\"\t"+matches(t.inputTrue,t.regex));
-            System.out.println("\""+t.inputFalse+"\"\t matches:\t\""+ t.regex+"\"\t"+matches(t.inputFalse,t.regex));
+        //alternation
+        testCases.add(new Test("abc|ihg|mno|uts", "mno", "mnou"));
+
+        //kleene star
+        testCases.add(new Test("abc*", "abcccc", "abd"));
+        testCases.add(new Test("abc*", "ab", "a"));
+
+        //kleene star and alternation
+        testCases.add(new Test("abc|ihg|mno|uts*", "utsssss", "ih"));
+
+        testCases.add(new Test("abcd*|lmn*", "abcdddd", "lmno"));
+
+        //capturing group
+        testCases.add(new Test("abc(d|e)", "abce", "jkl"));
+        testCases.add(new Test("(((a)))", "a", "b"));
+        testCases.add(new Test("abc(d|e*)", "abceeee", "ab"));
+
+        for (Test t : testCases) {
+            System.out.println("\"" + t.inputTrue + "\"\t matches:\t\"" + t.regex + "\"\t" + matches(t.inputTrue, t.regex));
+            System.out.println("\"" + t.inputFalse + "\"\t matches:\t\"" + t.regex + "\"\t" + matches(t.inputFalse, t.regex));
             System.out.println("---------------------------------------------------------");
-        } 
-        
+        }
+
     }
-    
-    
-    
-    
 }
