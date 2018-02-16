@@ -9,7 +9,7 @@ lowercase English letters (a, b, c, ...) <br />
 () for grouping expressions <br />
 
 This implementation supports (...\*), however, it does not support (...)\*. The latter 
-is a work in progress. 
+is work in progress. 
 
 
 Contact:
